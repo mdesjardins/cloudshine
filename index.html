@@ -1,0 +1,59 @@
+<html>
+  <head>
+    <title>Example App</title>
+    <script>
+      var ipc = require('ipc');
+      ipc.on('statuses-updated', function(arg) {
+        var arr = $.makeArray(arg);
+        console.log(">>> RENDERER, STATUSES UPDATE (ARRAY): " + JSON.stringify(arr));
+        var source   = $("#statuses-template").html();
+        var template = Handlebars.compile(source);
+        var context = {'statuses': arr}
+        var html = template(context);
+        $('#test-statuses').html(html);
+      });
+    </script>
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+  </head>
+  <body>
+    hello world
+    <div id="test-jquery"></div>
+    <div id="test-handlebars"></div>
+    <div id="test-statuses"></div>
+  </body>
+  <script id="entry-template" type="text/x-handlebars-template">
+    <div class="entry">
+      <h1>{{title}}</h1>
+      <div class="body">
+        {{body}}
+      </div>
+    </div>
+  </script>
+  <script id="statuses-template" type="text/x-handlebars-template">
+    <table class="table table-condensed">
+      <tbody>
+        {{#each statuses}}
+          <tr>
+            <td>{{service}}</td>
+            <td>{{result.message}}</td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </script>  
+  <script type="text/javascript">
+    window.$ = window.jQuery = require('./node_modules/jquery/dist/jquery.min.js');
+    require('./node_modules/bootstrap/dist/js/bootstrap.min.js');
+    window.Handlebars = require('./node_modules/handlebars/dist/handlebars.js');
+    $(document).ready(function() {
+      $('#test-jquery').html('HELLO JQUERY!');
+
+      var source   = $("#entry-template").html();
+      var template = Handlebars.compile(source);
+      var context = {title: "My New Post", body: "This is my first post!"};
+      var html = template(context);
+      $('#test-handlebars').html(html);
+    });
+  </script>
+</html>
